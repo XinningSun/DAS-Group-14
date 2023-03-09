@@ -3,14 +3,57 @@ title: "Group_14_Analysis"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r packages, include=FALSE}
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(moderndive)
+library(gapminder)
+library(sjPlot)
+library(stats)
+library(jtools)
+library(reshape2)    
+library(ggpubr)
 ```
 
-## R Markdown
+```{r dataset, include=FALSE}
+coffee <- read.csv("https://raw.githubusercontent.com/martacasero7/DAS-Group-14/main/dataset14.csv")
+```
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r summaries}
+summary(coffee)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+ggplot(data = coffee, aes(x=country_of_origin, group = Qualityclass)) +
+  geom_bar(aes(y = ..prop.., fill= Qualityclass), stat="count", position="dodge") +
+   scale_fill_manual(values = c("darkseagreen", "indianred")) +
+  labs(x= "Where is the coffee from?", y="Proportion") +
+  ggpubr::rotate_x_text()
 
-This is a line from RStudio
+coffee$harvested <- as.factor(coffee$harvested)
+ggplot(data = coffee, aes(x=harvested, group = Qualityclass)) +
+  geom_bar(aes(y = ..prop.., fill= Qualityclass), stat="count", position="dodge") +
+  scale_fill_manual(values = c("darkseagreen", "indianred")) +
+  labs(x= "When was the coffee harvested?", y="Proportion") 
+
+#Some data wrangling to get a nice boxplot with aroma, flavor and acidity
+coffee_long <- melt(coffee, id="Qualityclass")
+coffee_qualities <- coffee_long %>% filter(!(variable %in% c("country_of_origin", "category_two_defects", "altitude_mean_meters", "harvested"))) %>% filter(value != "0") 
+coffee_qualities$value <- as.numeric(coffee_qualities$value)
+ggplot(coffee_qualities, aes(x = variable, y=value)) + 
+  geom_boxplot(aes(fill= Qualityclass)) + 
+  scale_fill_manual(values = c("darkseagreen", "indianred")) +
+  labs(x="", y="Grade")
+
+ggplot(coffee, aes(y=category_two_defects)) +
+  geom_boxplot(aes(fill=Qualityclass)) +
+  scale_fill_manual(values = c("darkseagreen", "indianred")) +
+  labs(x="Category two defects", y="Count")
+
+coffee_alt <- coffee %>% drop_na(altitude_mean_meters)
+ggplot(coffee_alt, aes(y=altitude_mean_meters)) +
+  geom_boxplot(aes(fill=Qualityclass), outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 2500)) +
+  scale_fill_manual(values = c("darkseagreen", "indianred")) +
+  labs(x="", y="Altitude")
+```
