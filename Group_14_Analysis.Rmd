@@ -21,6 +21,20 @@ library(ggpubr)
 coffee <- read.csv("https://raw.githubusercontent.com/martacasero7/DAS-Group-14/main/dataset14.csv")
 ```
 
+```{r, echo=FALSE, warning=FALSE, message=FALSE,results='markup', fig.show='asis', eval=TRUE, table.pos="H"}
+library(skimr)
+library(kableExtra)
+my_skim <- skim_with(numeric = sfl(hist = NULL), 
+                    base = sfl(n = length))
+my_skim(coffee[2:7]) %>%
+  transmute(Variable=skim_variable, n = n, Mean=round(numeric.mean,2), SD=round(numeric.sd,2),
+            Min=numeric.p0, Median=numeric.p50,  Max=numeric.p100,
+            IQR = numeric.p75-numeric.p50) %>%
+  kable(caption = '\\label{tab:summariesskim} Summary statistics 
+        of the coffee data') %>%
+  kable_styling(font_size = 10, latex_options = "hold_position")
+```
+
 ```{r summaries}
 summary(coffee)
 
