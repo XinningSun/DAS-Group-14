@@ -57,3 +57,5 @@ ggplot(coffee_alt, aes(y=altitude_mean_meters)) +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
   labs(x="", y="Altitude")#The fifth plot is a boxplot comparing the altitude of coffee farms by quality class. 
 ```
+
+
