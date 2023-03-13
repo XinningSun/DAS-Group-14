@@ -28,13 +28,13 @@ ggplot(data = coffee, aes(x=country_of_origin, group = Qualityclass)) +
   geom_bar(aes(y = ..prop.., fill= Qualityclass), stat="count", position="dodge") +
    scale_fill_manual(values = c("darkseagreen", "indianred")) +
   labs(x= "Where is the coffee from?", y="Proportion") +
-  ggpubr::rotate_x_text()
+  ggpubr::rotate_x_text() # The first plot is a bar chart showing the proportion of coffee quality classes by country of origin. 
 
 coffee$harvested <- as.factor(coffee$harvested)
 ggplot(data = coffee, aes(x=harvested, group = Qualityclass)) +
   geom_bar(aes(y = ..prop.., fill= Qualityclass), stat="count", position="dodge") +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x= "When was the coffee harvested?", y="Proportion") 
+  labs(x= "When was the coffee harvested?", y="Proportion") #The second plot is a bar chart showing the proportion of coffee quality classes by when the coffee was harvested. 
 
 #Some data wrangling to get a nice boxplot with aroma, flavor and acidity
 coffee_long <- melt(coffee, id="Qualityclass")
@@ -43,17 +43,17 @@ coffee_qualities$value <- as.numeric(coffee_qualities$value)
 ggplot(coffee_qualities, aes(x = variable, y=value)) + 
   geom_boxplot(aes(fill= Qualityclass)) + 
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x="", y="Grade")
+  labs(x="", y="Grade")#The third plot is a boxplot comparing the grades of coffee based on different qualities such as aroma, flavor, and acidity. 
 
 ggplot(coffee, aes(y=category_two_defects)) +
   geom_boxplot(aes(fill=Qualityclass)) +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x="Category two defects", y="Count")
+  labs(x="Category two defects", y="Count")#The fourth plot is a boxplot comparing the number of category two defects by quality class. 
 
 coffee_alt <- coffee %>% drop_na(altitude_mean_meters)
 ggplot(coffee_alt, aes(y=altitude_mean_meters)) +
   geom_boxplot(aes(fill=Qualityclass), outlier.shape = NA) +
   coord_cartesian(ylim =  c(0, 2500)) +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x="", y="Altitude")
+  labs(x="", y="Altitude")#The fifth plot is a boxplot comparing the altitude of coffee farms by quality class. 
 ```
