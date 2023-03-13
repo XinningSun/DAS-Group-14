@@ -1,0 +1,96 @@
+---
+title: "Group_14_wyw"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r packages, include=FALSE}
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(moderndive)
+library(gapminder)
+library(GGally)
+library(psych)
+library(jtools)
+library(reshape2)
+library(sjPlot)
+library(stats)
+
+```
+
+```{r dataset, include=FALSE}
+coffee <- read.csv("dataset14.csv")
+coffee$Qualityclass <- as.integer(as.factor(coffee$Qualityclass))-1
+coffee_glm <- na.omit(coffee)
+```
+
+correlation analysing
+```{r, eval = TRUE, out.width = '60%', fig.align = "center", fig.cap = "\\label{fig:scat} correlation between each variables", fig.pos = "H"}
+ggpairs(coffee_glm[,2:8])
+```
+Figure 1 shows there is strong correlation between the first three variables: arroma, flavor and acidity. 
+
+The strong correlation shows that we need to do further data cleaning. First, seperating the dataset into two catagories, one callled coffee_cor, the other one is coffee_non_cor.
+
+```{r, eval=TRUE}
+coffee1_1 <- coffee_glm[,2:4]
+coffee1_2 <- coffee_glm[,5:8]
+coffee1_3 <- coffee_glm[,2:8]
+```
+
+We performed a principal components analysis on coffee1_1.
+```{r, eval=TRUE}
+coffee1_1_pca<-princomp(coffee1_1, cor=T)
+summary(coffee1_1_pca)
+```
+As we can see from the table above, the cumulative proportion of the first component is 0.8746, so we can only choose the first componnet.
+```{r, eval=TRUE}
+cor11 <- cor(coffee1_1, coffee1_1)
+pca11 <- principal(cor11, nfactor = 1, rotate= "cluster")
+score11 <- predict.psych(pca11, coffee1_1 )
+```
+
+Combine this first componnet with coffee
+```{r, eval=TRUE}
+final_1 <- cbind(score11, coffee1_2)
+summary(final_1)
+```
+
+Trying: 1st glm function
+```{r, eval=TRUE}
+model_1 <- glm(Qualityclass ~ PC1+category_two_defects+
+                 altitude_mean_meters, data = final_1, 
+               family = binomial(link = "cloglog"))
+summary(model_1)
+```
+
+
+
+Trying: 2nd glm function 
+We performed a principal components analysis on coffee1_3.
+```{r, eval=TRUE}
+coffee1_3_pca<-princomp(coffee1_3, cor=T)
+summary(coffee1_3_pca)
+```
+As we can see from the table above, the cumulative proportion of the fourth component is 0.8608002, so we can only choose the first four componnet.
+```{r, eval=TRUE}
+cor13 <- cor(coffee1_3[,1:6], coffee1_3[,1:6])
+pca13 <- principal(cor13, nfactor = 4, rotate= "cluster")
+score13 <- predict.psych(pca13, coffee1_3[,1:6] )
+```
+Use these 4 componnets as explanatory variables
+```{r, eval=TRUE}
+final_2 <- cbind(score13, coffee_glm$Qualityclass)
+summary(final_2)
+```
+
+Trying: 1st glm function
+```{r, eval=TRUE}
+final_2 <- as.data.frame(final_2)
+model_2 <- glm(V5 ~ RC1+RC2+RC4+RC3, data = final_2, 
+               family = binomial(link = "logit"))
+summary(model_2)
+```
