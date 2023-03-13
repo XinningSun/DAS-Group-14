@@ -60,7 +60,7 @@ coffee %>%
 
 #GLM
 model <- glm(Qualityclass ~ aroma + flavor + acidity +category_two_defects + altitude_mean_meters,
-             data = coffee.select,
+             data = coffee,
              family = binomial(link = "logit"))
 
 summ(model)
