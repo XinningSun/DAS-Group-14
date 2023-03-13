@@ -21,7 +21,7 @@ library(ggpubr)
 coffee <- read.csv("https://raw.githubusercontent.com/martacasero7/DAS-Group-14/main/dataset14.csv")
 ```
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE,results='markup', fig.show='asis', eval=TRUE, table.pos="H"}
+```{r summarytable, echo=FALSE, warning=FALSE, message=FALSE,results='markup', fig.show='asis', eval=TRUE, table.pos="H"}
 library(skimr)
 library(kableExtra)
 my_skim <- skim_with(numeric = sfl(hist = NULL), 
