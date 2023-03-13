@@ -28,7 +28,7 @@ coffee.data$harvested <- factor(coffee.data$harvested)
 levels(coffee.data$Quality_class) <- c("Poor", "Good")
 
 rownames(coffee.data) <- NULL
-#GLM分析
+#GLM
 model <- glm(Quality_class ~ aroma + flavor + acidity + category_two_defects + altitude_mean_meters + harvested, 
              data = coffee.data,
              family = binomial(link = "logit"))
