@@ -10,11 +10,11 @@ library(jtools)
 library(reshape2)    
 library(ggpubr)
 
-#将数据导入R
+#Import data into R
 coffee <- read.csv("https://raw.githubusercontent.com/martacasero7/DAS-Group-14/main/dataset14.csv")
-#清洗数据，删除缺失值
+#Clean the data by removing missing values.
 coffee <- na.omit(coffee)
-#因子化变量
+#
 coffee$Quality_class <- ifelse(coffee$Qualityclass == "Good", "yes", "no")
 
 coffee.select <- coffee %>%
