@@ -22,7 +22,7 @@ coffee <- na.omit(coffee)
 coffee <- coffee %>%
   select(aroma, flavor, acidity, category_two_defects, altitude_mean_meters, Qualityclass)
 coffee$Qualityclass <- as.factor(coffee$Qualityclass)
-levels(coffee$Qualityclass) <- c("Poor","Good")
+levels(coffee$Qualityclass) <- c("Good","Poor")
 
 #Visualize the data
 
@@ -58,6 +58,30 @@ coffee %>%
   adorn_pct_formatting() %>%
   adorn_ns()
 
+coffee %>%
+  tabyl(flavor, Qualityclass) %>%
+  adorn_percentages() %>%
+  adorn_pct_formatting() %>%
+  adorn_ns()
+
+coffee %>%
+  tabyl(acidity, Qualityclass) %>%
+  adorn_percentages() %>%
+  adorn_pct_formatting() %>%
+  adorn_ns()
+
+coffee %>%
+  tabyl(category_two_defects, Qualityclass) %>%
+  adorn_percentages() %>%
+  adorn_pct_formatting() %>%
+  adorn_ns()
+
+coffee %>%
+  tabyl(altitude_mean_meters, Qualityclass) %>%
+  adorn_percentages() %>%
+  adorn_pct_formatting() %>%
+  adorn_ns()
+
 #GLM
 model <- glm(Qualityclass ~ aroma + flavor + acidity +category_two_defects + altitude_mean_meters,
              data = coffee,
@@ -67,3 +91,13 @@ summ(model)
 
 plot_model(model, show.values = TRUE,
            title = "", show.p = FALSE, value.offset = 0.25)
+
+model %>%
+  coef() %>%
+  exp()
+
+plot_model(model,show.values = TRUE,
+           title = "Odds(Good/Poor)",show.p = FALSE)
+
+coffee <- coffee %>%
+  mutate(Qualityclass_fitted = fitted(model))
