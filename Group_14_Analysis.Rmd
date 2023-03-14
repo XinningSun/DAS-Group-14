@@ -21,6 +21,20 @@ library(ggpubr)
 coffee <- read.csv("https://raw.githubusercontent.com/martacasero7/DAS-Group-14/main/dataset14.csv")
 ```
 
+```{r summarytable, echo=FALSE, warning=FALSE, message=FALSE,results='markup', fig.show='asis', eval=TRUE, table.pos="H"}
+library(skimr)
+library(kableExtra)
+my_skim <- skim_with(numeric = sfl(hist = NULL), 
+                    base = sfl(n = length))
+my_skim(coffee[2:7]) %>%
+  transmute(Variable=skim_variable, n = n, Mean=round(numeric.mean,2), SD=round(numeric.sd,2),
+            Min=numeric.p0, Median=numeric.p50,  Max=numeric.p100,
+            IQR = numeric.p75-numeric.p50) %>%
+  kable(caption = '\\label{tab:summariesskim} Summary statistics 
+        of the coffee data') %>%
+  kable_styling(font_size = 10, latex_options = "hold_position")
+```
+
 ```{r summaries}
 summary(coffee)
 
@@ -28,13 +42,13 @@ ggplot(data = coffee, aes(x=country_of_origin, group = Qualityclass)) +
   geom_bar(aes(y = ..prop.., fill= Qualityclass), stat="count", position="dodge") +
    scale_fill_manual(values = c("darkseagreen", "indianred")) +
   labs(x= "Where is the coffee from?", y="Proportion") +
-  ggpubr::rotate_x_text()
+  ggpubr::rotate_x_text() # The first plot is a bar chart showing the proportion of coffee quality classes by country of origin. 
 
 coffee$harvested <- as.factor(coffee$harvested)
 ggplot(data = coffee, aes(x=harvested, group = Qualityclass)) +
   geom_bar(aes(y = ..prop.., fill= Qualityclass), stat="count", position="dodge") +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x= "When was the coffee harvested?", y="Proportion") 
+  labs(x= "When was the coffee harvested?", y="Proportion") #The second plot is a bar chart showing the proportion of coffee quality classes by when the coffee was harvested. 
 
 #Some data wrangling to get a nice boxplot with aroma, flavor and acidity
 coffee_long <- melt(coffee, id="Qualityclass")
@@ -43,17 +57,19 @@ coffee_qualities$value <- as.numeric(coffee_qualities$value)
 ggplot(coffee_qualities, aes(x = variable, y=value)) + 
   geom_boxplot(aes(fill= Qualityclass)) + 
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x="", y="Grade")
+  labs(x="", y="Grade")#The third plot is a boxplot comparing the grades of coffee based on different qualities such as aroma, flavor, and acidity. 
 
 ggplot(coffee, aes(y=category_two_defects)) +
   geom_boxplot(aes(fill=Qualityclass)) +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x="Category two defects", y="Count")
+  labs(x="Category two defects", y="Count")#The fourth plot is a boxplot comparing the number of category two defects by quality class. 
 
 coffee_alt <- coffee %>% drop_na(altitude_mean_meters)
 ggplot(coffee_alt, aes(y=altitude_mean_meters)) +
   geom_boxplot(aes(fill=Qualityclass), outlier.shape = NA) +
   coord_cartesian(ylim =  c(0, 2500)) +
   scale_fill_manual(values = c("darkseagreen", "indianred")) +
-  labs(x="", y="Altitude")
+  labs(x="", y="Altitude")#The fifth plot is a boxplot comparing the altitude of coffee farms by quality class. 
 ```
+
+
