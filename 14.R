@@ -23,13 +23,21 @@ coffee <- coffee %>%
 coffee$Qualityclass <- ifelse(coffee$Qualityclass == "Poor", 0, 1)
 
 # Define a function to remove outliers.
-##This code defines a function called "remove_outliers", which takes two arguments: a data frame (df) and a variable name (var_name). The function calculates the lower and upper bounds for the variable using the first and third quartiles (quantiles) and the interquartile range (IQR). It then subsets the data frame by removing any rows where the variable value is outside of the lower and upper bounds. Finally, the function returns the modified data frame.)
+## Remove outliers from a data frame
+### df: a data frame
+### var_name: the name of the column containing the variable of interest
+### return: the data frame with outliers removed
+
 remove_outliers <- function(df, var_name) {
-  quantiles <- quantile(df[[var_name]], probs=c(0.25,0.75), na.rm=FALSE)
-  IQR_val <- IQR(df[[var_name]])
-  Lower_val <- quantiles[1]-1.5*IQR_val
-  Upper_val <- quantiles[2]+1.5*IQR_val
-  df <- subset(df, df[[var_name]] > Lower_val & df[[var_name]] < Upper_val)
+  # Calculate the lower and upper bounds
+  q <- quantile(df[[var_name]], probs=c(0.25, 0.75), na.rm=FALSE)
+  iqr <- IQR(df[[var_name]])
+  lower <- q[1] - 1.5 * iqr
+  upper <- q[2] + 1.5 * iqr
+  
+  # Subset the data frame to remove outliers
+  df <- subset(df, df[[var_name]] > lower & df[[var_name]] < upper)
+  
   return(df)
 }
 
